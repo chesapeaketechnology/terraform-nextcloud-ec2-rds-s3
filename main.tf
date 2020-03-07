@@ -12,6 +12,7 @@ module "network" {
   instance_id = module.nextcloud-app.nextcloud_core_instance_id
 }
 
+
 module "nextcloud-app" {
   source = "./modules/services/nextcloud-app"
 
@@ -19,8 +20,8 @@ module "nextcloud-app" {
   instance_type = var.nextcloud_instance_type
   key_name = var.nextcloud_key_name
 
-  vpc_id = module.network.vpc_id
-  subnet_id = module.network.public_subnet_id
+  vpc_id = var.cti_secure_vpc
+  subnet_id = var.cti_prod_subnet
 
   admin_user = var.admin_user
   admin_pass = var.admin_pass
@@ -41,9 +42,9 @@ module "database" {
   db_user = var.db_user
   db_pass = var.db_pass
 
-  vpc_id = module.network.vpc_id
+  vpc_id = var.cti_secure_vpc
   public_subnet_cidr = var.nextcloud_cidr
-  subnet_id = module.network.private_subnet_id
+  subnet_id = var.cti_prod_subnet
   subnet_group = module.network.subnet_group
 }
 

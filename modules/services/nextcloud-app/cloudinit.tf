@@ -2,13 +2,23 @@ data "template_cloudinit_config" "cloudinit-nextcloud" {
   gzip          = false
   base64_encode = false
 
-  # 1. Download nextcloud and install dependencies
+  # Download nextcloud and install dependencies
   part {
     content_type = "text/x-shellscript"
     content = templatefile("${path.module}/scripts/1_download_nextcloud_and_deps.sh", {})
   }
 
-  # 2. Configure Nextcloud database in RDS
+  # Mount EBS Volume as datadir
+  /*
+  part {
+    content_type = "text/x-shellscript"
+    content = templatefile("${path.module}/scripts/23_mount_ebs.sh", {
+                    data_dir = var.data_dir,
+    })
+  }
+  */
+
+  # Configure Nextcloud database in RDS
   part {
     content_type = "text/x-shellscript"
     content = templatefile("${path.module}/scripts/2_configure_db_rds.sh", {
@@ -23,7 +33,7 @@ data "template_cloudinit_config" "cloudinit-nextcloud" {
     })
   }
 
-  # 3. Configure Nextcloud datastore in S3
+  # Configure Nextcloud datastore in S3
   part {
     content_type = "text/x-shellscript"
     content = templatefile("${path.module}/scripts/3_configure_datastore_s3.sh", {
@@ -34,13 +44,13 @@ data "template_cloudinit_config" "cloudinit-nextcloud" {
     })
   }
 
-  # 4. Install Apache conf for Nextcloud
+  # Install Apache conf for Nextcloud
   part {
     content_type = "text/x-shellscript"
     content = templatefile("${path.module}/scripts/4_nextcloud_apache_conf.sh", {})
   }
 
-  # 5. Finish Apache configuration and start service
+  # Finish Apache configuration and start service
   part {
     content_type = "text/x-shellscript"
     content = templatefile("${path.module}/scripts/5_finish_config_and_start.sh", {})

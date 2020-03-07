@@ -3,7 +3,7 @@ variable "instance_type" {
 }
 
 variable "aws_region"{
-    default = "eu-west-1"
+    default = "us-gov-west-1"
 }
 
 variable "subnet_id" {

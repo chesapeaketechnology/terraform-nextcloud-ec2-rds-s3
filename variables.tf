@@ -4,16 +4,17 @@
 
 variable "aws_region" {
   description = "Region where to deploy the Nextcloud application and the database"
-  default = "eu-west-1"
+  default = "us-gov-west-1"
 }
+
 variable "nextcloud_instance_type" {
     description = "Instance type for the Nextcloud application"
-    default = "t2.micro"
+    default = "m4.large"
 }
 
 variable "nextcloud_key_name" {
     description = "SSH key name to associate to the Nextcloud app instance"
-    default = null
+    default = "nextcloud-initial"
 }
 
 variable "db_instance_type" {
@@ -28,18 +29,21 @@ variable "db_instance_type" {
 
 variable "vpc_cidr" {
   description = "CIDR of the VPC"
-  default = "10.0.0.0/16"
+  default = "10.101.0.0/16"
 }
 
 variable "nextcloud_cidr" {
   description = "CIDR of the public subnet"
-  default = "10.0.1.0/24"
+  default = "10.101.1.0/24"
 }
 
 variable "db_cidr" {
   description = "CIDR of the private subnet"
-  default = "10.0.2.0/24"
+  default = "10.101.10.0/24"
 }
+
+
+
 
 
 ############
@@ -78,4 +82,21 @@ variable "s3_bucket_name" {
 variable "force_datastore_destroy" {
   description = "Destroy all objects so that the bucket can be destroyed without error. These objects are not recoverable"
   default = false
+}
+
+
+###############################
+# EXISTING CTI INFRASTRUCTURE #
+###############################
+
+variable "cti_secure_vpc" {
+  default = "vpc-dc8c93be"
+}
+
+variable "cti_prod_subnet" {
+  default = "subnet-d98791bb"
+}
+
+variable "cti_full_sophos_sg" {
+  default = "sg-0bee186e"
 }

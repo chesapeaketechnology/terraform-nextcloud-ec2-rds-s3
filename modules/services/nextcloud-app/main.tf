@@ -1,45 +1,41 @@
 resource "aws_instance" "nextcloud_app_instance"{
-    ami = data.aws_ami.ubuntu_bionic_lts.id
+    ami = "ami-12531d73"
+    ebs_optimized = true
     instance_type = var.instance_type
-    vpc_security_group_ids = [aws_security_group.nextcloud_app_sg.id]
+    private_ip = "10.101.1.31"
+    vpc_security_group_ids = ["sg-0bee186e"]
     subnet_id = var.subnet_id
+    volume_tags = {
+        Name = "NEXTCLOUD"
+    }
+    root_block_device {
+    encrypted = true
+    volume_size = 80
+    }
 
     key_name = var.key_name
 
     tags = {
-        Name = "Nextcloud app"
+        Name = "NEXTCLOUD"
     }
 
     user_data = "${data.template_cloudinit_config.cloudinit-nextcloud.rendered}"
 }
 
-resource "aws_security_group" "nextcloud_app_sg" {
-    name = "nextcloud_app_sg"
-
-    ingress {
-        from_port="80"
-        to_port="80"
-        protocol="tcp"
-        cidr_blocks = ["0.0.0.0/0"]
-    }
-
-    ingress {
-        from_port="22"
-        to_port="22"
-        protocol="tcp"
-        cidr_blocks = ["0.0.0.0/0"]
-    }
-
-    egress {
-        from_port       = 0
-        to_port         = 0
-        protocol        = "-1"
-        cidr_blocks     = ["0.0.0.0/0"]
-    }
-
-    vpc_id = var.vpc_id
-
-    lifecycle {
-        create_before_destroy = true
+/*
+resource "aws_ebs_volume" "ebs-nextcloud" {
+    availability_zone = "us-gov-west-1b"
+    size = 100
+    type = "sc1"
+    encrypted = true
+    tags = {
+        Name = "NEXTCLOUD_CACHE"
     }
 }
+
+resource "aws_volume_attachment" "ebs-nextcloud-attachment" {
+  device_name = "/dev/sdg"
+  volume_id = "${aws_ebs_volume.ebs-nextcloud.id}"
+  instance_id = "${aws_instance.nextcloud_app_instance.id}"
+}
+*/
